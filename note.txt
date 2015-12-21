@@ -16,7 +16,7 @@
 		rails g bootstrap:install static
 
 		then add to git
-		git add -all
+		git add --all
 		git commit -m "add bootstrap"
 		git push -u origin master
 
@@ -28,7 +28,7 @@
 		*= require font-awesome
 
 		then add to git
-		git add -all
+		git add --all
 		git commit -m "add fontawesome"
 		git push -u origin master
 
@@ -42,3 +42,9 @@
 		git add --all
 		git commit -m "Installed simple form"
 		git push -u origin master
+
+
+
+6:		/ / create home controller
+		rails g controller pages home
+		and change route.rb > root to: 'pages#home'
