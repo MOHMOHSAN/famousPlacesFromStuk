@@ -86,7 +86,8 @@
 		end
 
 		go to route.rb
-		devise_for:users, controller: { registrations: "registrations"}
+		devise_for:users, controllers: { registrations: "registrations"} 
+		// controllers must be plural not singular
 
 		views > regirstraions > new.html.erb > 
 		remove password_confirmation field and add
@@ -97,3 +98,8 @@
 		git add --all
 		git commit -m "added devise gem"
 		git push  origin master
+
+
+		** note simple form gem must install first before devise. Or if form gem is installed later,
+		u have to destroy views and generate devise views again to use form gem
+		rails d devise:views then rails g devise:views
