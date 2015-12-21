@@ -246,5 +246,20 @@
 		then inside config > initializers > simple_form.rb 
 		change to  config.browser_validations = true
 		** note safari won't show javascript validation
- 
+
+
+		git add .
+		git commit -m "generate scaffold places"
+		git push origin master
+
+
+12:		//------------- associate places and user model ---------- //
+		places_controller.rb,
+		before_action :authenticate_user!, only: [:new,:edit,:destroy,:create,:update]
+		def create
+			@place = current_user.places.new(place_params)
+
+		then places > _form > remove user_id field
+ 		
+
 
