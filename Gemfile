@@ -37,6 +37,9 @@ gem 'simple_form'
 # devise
 gem 'devise'
 
+#avator
+gem 'gravatarify', '~> 3.0.0'
+
 
 
 # Use ActiveModel has_secure_password
