@@ -45,6 +45,55 @@
 
 
 
-6:		/ / create home controller
+6:		// create home controller
 		rails g controller pages home
 		and change route.rb > root to: 'pages#home'
+
+		git add --all
+		git commit -m "added home page"
+		git push  origin master
+
+
+7:		// create nav bar (header)
+		views > created file called _header.html.erb , copy this
+
+		inside views > application.html.erb > before yield > <%= render "layout/header" %>
+
+
+8:		// create devise gem
+		gem 'devise'
+		inside terminal,
+		rails generate devise:install
+		rails generate devise User
+		rails generate devise:views
+
+		go to db >migrate file , add name:string on top of email then
+		rake db:migrate
+
+		// go to model > user.rb > validates_presence_of :name
+
+		create new file called registrations_controller.rb and copy this
+		class RegistrationsController < Devise::RegistraitonsController
+			private
+
+			def sign_up_params
+				params.require(:user).permit(:name,:email,:password)
+			end
+
+			def account_update_params
+				params.require(:user).permit(:name,:email,:password,:current_password)
+			end
+		end
+
+		go to route.rb
+		devise_for:users, controller: { registrations: "registrations"}
+
+		views > regirstraions > new.html.erb > 
+		remove password_confirmation field and add
+		<%= f.input :name,required: true, autofocus:true %> and remove autofocus from email
+
+		and change edit file exactly same as new file also
+
+		git add --all
+		git commit -m "added devise gem"
+		git push  origin master
