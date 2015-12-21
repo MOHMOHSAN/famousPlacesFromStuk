@@ -179,4 +179,72 @@
 		then
 		<%= link_to "Change Avatar", "https://en.gravatar.com/" %>
 
+		if will grab image from gravator website and put here
+
+		git add --all
+		git commit -m "added gravator"
+		git push  origin master
+
+
+11:		//---------- generating scaffold Places --------//
+		rails generate scaffold places name:string address:string description:text phone:string website:string user_id:integer --no-stylesheets
+
+		rake db:migrate
+
+		inside  models > places.rb
+			belongs_to :user
+	
+			validates_presence_of :name
+			validates_presence_of :phone
+			validates_presence_of :address
+			validates_presence_of :website
+			validates_presence_of :user_id
+
+		and inside models > user.rb
+			has_many :places , dependent: :destroy
+
+		and inside _header.html.erb, change <li><a href="#">Places</a></li> to
+			 <li><%= link_to "Places",places_path %></li>
+
+		and inside places > index.html.erb > remove some column and notice message 
+		<h1>Listing Places</h1>
+
+		<table class="table">
+		  <thead>
+		    <tr>
+		      <th>Name</th>
+		      <th>Address</th>
+		      <th>Phone</th>
+		      <th>Website</th>
+		     
+		      <th colspan="3"></th>
+		    </tr>
+		  </thead>
+
+		  <tbody>
+		    <% @places.each do |place| %>
+		      <tr>
+		        <td><%= place.name %></td>
+		        <td><%= place.address %></td>
+		        <td><%= place.phone %></td>
+		        <td><%= place.website %></td>
+		    
+		      </tr>
+		    <% end %>
+		  </tbody>
+		</table>
+
+		<br>
+		<% if current_user %>
+		  <%= link_to 'New Place', new_place_path %>
+		<% end %>
+
+
+		then inside views > places > _form.htm.erb > add javascript validation like this
+			<%= f.input :user_id,required: true %> for name, address, phone, website, user_id
+
+		then inside config > initializers > simple_form.rb 
+		change to  config.browser_validations = true
+		** note safari won't show javascript validation
+ 
 
