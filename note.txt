@@ -1,3 +1,44 @@
 1:		rails new famousPlacesFromStuk
 
-2:		
+2:		// git repository
+		create new repository in github, then inside terminal type those
+		git init
+		git add .
+		git commit -m "first commit"
+		git remote add origin https://github.com/MOHMOHSAN/famousPlacesFromStuk.git
+		git push -u origin master 
+		then refresh github website and will see project is imported
+
+
+3:		//add bootstrap 
+		gem 'twitter-bootstrap-rails', :git => 'git://github.com/seyhunak/twitter-bootstrap-rails.git'
+		bundle install
+		rails g bootstrap:install static
+
+		then add to git
+		git add -all
+		git commit -m "add bootstrap"
+		git push -u origin master
+
+
+4:		// add font awesome from https://github.com/bokmann/font-awesome-rails
+		gem "font-awesome-rails"
+		bundle install
+		inside stylesheets >  application.css	> under tree 
+		*= require font-awesome
+
+		then add to git
+		git add -all
+		git commit -m "add fontawesome"
+		git push -u origin master
+
+
+5:		//add simple form gem
+		gem 'simple_form'
+		bundle install
+
+		rails g simple_form:install --bootstrap
+
+		git add --all
+		git commit -m "Installed simple form"
+		git push -u origin master
