@@ -103,3 +103,22 @@
 		** note simple form gem must install first before devise. Or if form gem is installed later,
 		u have to destroy views and generate devise views again to use form gem
 		rails d devise:views then rails g devise:views
+
+
+9:		//----------- flash message	-------------//
+		Add the following code after the render of header partial and outside container:
+			<% flash.each do |type,message| %>
+				<div class="alert alert-info fade-in">
+					<button class="close" data-dismiss="alert">x</button>
+					<%= message %>
+				</div>
+			<% end %>
+
+
+		then inside stylesheet > pages.scss copy this
+		.alert{
+			position: absolute;
+			z-index: 1;
+			width: 200px;
+		}
+
