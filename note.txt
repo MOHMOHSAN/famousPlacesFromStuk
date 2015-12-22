@@ -378,6 +378,80 @@ Note : *** if u got messed up everything in migration,
 
 
 
+15:    	// -------------- creating review models ------------------ //
+		
+		(i)
+		rails generate model review place_id:integer user_id:integer content:text
+		rake db:migrate
+
+		(ii)
+		inside models > review.rb
+			belongs_to :place
+			belongs_to :user
+			validates_presence_of :content
+
+
+		(iii)
+		inside models > user.rb and place.rb
+			has_many :reviews, dependent: :destroy
+
+
+		(iv)
+		create new controller called reviews_controller.rb and pasted this
+
+
+		(v)
+		create new folder inside views and called reviews
+		create views > reviews > _form.html.erb and copy this
+			<%= simple_form_for(@review) do |f| %>
+			  <%= f.error_notification %>
+
+			  <div class="form-inputs">
+			    <%= f.input :content , required: true %>
+			    <%= f.hidden_field :place_id,required: true , value: @place.id %>
+			  </div>
+
+			  <div class="form-actions">
+			    <%= f.button :submit %>
+			  </div>
+			<% end %>
+		** @place.id not @place_id , @place.id is getting from places > show form
+		then go to places > show.html.erb > add
+			<% if current_user %>
+				<%= render 'reviews/form' %>
+			<% end %>
+
+		(vi)
+		inside places_controller.rb , inside show method
+			@review = Review.new => to initailize review
+		** need this cos inside places > show.html.erb , we pass @review variable
+
+		(vii)
+		add routes 
+			resources :reviews
+
+		(viii)	displaying all reviews inside show
+		inside places_controller.rb , inside show method, add
+			@reviews = @place.reviews above @review
+
+		inside views > places > show , add
+			<h5>All Reviews</h5>
+   			<%= render @reviews %>
+   		below create review renderer
+
+   		inside views > reviews , create new file called _review.html.erb and add
+   			<p><%= gravatar_tag review.user.email,size:20 %>
+			<%= review.content %> by <%= review.user.name %></p>
+
+
+
+
+
+
+		
+
+
+
 
 
 

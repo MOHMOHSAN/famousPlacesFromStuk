@@ -26,6 +26,12 @@
    </div>
    <div class="col-md-6">
     <h3>Reviews by People</h3>
+    <% if current_user %>
+      <h5>New Review </h5>
+      <%= render 'reviews/form' %>
+    <% end %>
+    <h5>All Reviews</h5>
+      <%= render @reviews %>
   </div>
 </div>
 
