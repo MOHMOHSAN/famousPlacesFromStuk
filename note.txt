@@ -637,6 +637,202 @@ Note : *** if u got messed up everything in migration,
 		(vii) push to github
 
 
+17:		//------ adding overall rating for each place -------
+			(i)
+			rails g migration AddTotalAverageRatingToPlaces total_average_rating:integer
+			and add default: 0 inside that migration file
+			rake db:migrate
+
+			(ii) add method to calculate overall rating
+			inside place.rb
+				def average_rating
+					self.reviews.sum(:score) / reviews.size
+				rescue ZeroDivisionError
+					0
+				end
+
+
+			(iii) testing inside rails console
+				Place.last.average_rating (// method from place.rb)
+
+
+			(iv) inside review.rb
+					#  create callback function
+					after_save :calculate_average
+
+					def calculate_average
+						a = self.place.average_rating
+						self.place.update_attributes(total_average_rating: a)
+					end
+
+
+			(v)	inside  places > show.html.erb , under name
+				
+					<div class="average"></div>
+
+					inside javascript part,
+					   $(".average").raty({
+				        starOn:  "<%= image_path('star-on.png') %>",
+				        starOff: "<%= image_path('star-off.png') %>",
+				        score: <%= @place.total_average_rating %>,
+				        readOnly: true
+				      });
+
+
+18:		//-------------- dashboard -------------//
+			
+			(i) inside pages_controller.rb
+
+				before_action :authenticate_user! , only: [:dashboard]
+				inside 
+				def dashboard 
+					@user = current_user
+				  	@places = @user.places
+				  	@reviews = @user.reviews
+
+
+				inside
+				def home
+					if current_user
+						redirect_to  pages_dashboard_path (for old routes) / dashboard_path (for rename route)
+
+
+			(ii) inside route.rb
+
+				 get 'pages/dashboard'  or rename route name
+
+				 get 'dashboard' , to: 'pages#dashboard'
+
+
+			(iii) inside views > pages > create dashborad.html.erb 
+					<div class="row">
+						<!-- /////////   Profile info  ///////// -->
+						<div class="col-md-2">
+							<h3><%= @user.name %></h3>
+							<%= gravatar_tag @user.email %>
+						</div>
+
+						<!-- /////////   Places info  ///////// -->
+						<div class="col-md-5">
+							<h3>My Places </h3>
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Created</th>
+										<th></th>
+									</tr>
+								</thead>
+
+								<tbody>
+									<% @places.each do |place| %>
+										<tr>
+											<td><%= place.name %></td>
+											<td><%= time_ago_in_words(place.created_at)%></td>
+											<td><%= link_to "Edit", edit_place_path(place) %> | <%= link_to "Destroy", place_path(place) , method: :delete %></td>
+										</tr>
+									<% end %>
+								</tbody>
+							</table>
+
+							<%= link_to "New Place" , new_place_path %>
+						</div>
+
+
+						<!-- /////////   Reviews info  ///////// -->
+						<div class="col-md-5">
+							<h3>My Reviews</h3>
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Place</th>
+										<th>Created</th>
+										<th>Rating</th>
+										<th></th>
+									</tr>
+								</thead>
+
+								<tbody>
+									<% @reviews.each do |review| %>
+										<tr>
+											<td><%= review.place.name %></td>
+											<td><%= time_ago_in_words(review.created_at)%> ago</td>
+											<td><div class="score_<%= review.id%>"></div></td>
+											<td><%= link_to "Edit", edit_review_path(review) %> | <%= link_to "Destroy", review_path(review) , method: :delete %></td>
+										</tr>
+									<% end %>
+								</tbody>
+							</table>
+
+							<%= link_to "New Place" , new_place_path %>
+						</div>
+					</div>
+
+
+				<script type="text/javascript">
+					<% @reviews.each do |review| %>
+				      $(".score_<%= review.id %> ").raty({
+				        starOn:  "<%= image_path('star-on.png') %>",
+				        starOff: "<%= image_path('star-off.png') %>",
+				        score: <%= review.score %>,
+				        readOnly: true
+				      });
+				    <% end %>
+				</script>
+
+			(iv) inside _header.html.erb , before setting link,
+
+					<li><%= link_to "Dashboard", dashboard_path %></li>
+
+
+
+19 :  //  ------------ Styling landing page -------------
+			
+			(i) add image to assets > images
+
+			(ii) https://css-tricks.com/perfect-full-page-background-image/
+			inside pages > home.html.erb , copy this
+
+			(iii) inside stylesheets / pages.scss
+				.landing { 
+				  background: image-url("back.jpg") no-repeat center center fixed; 
+				  -webkit-background-size: cover;
+				  -moz-background-size: cover;
+				  -o-background-size: cover;
+				  background-size: cover;
+				  height: 100vh;
+				}
+
+				.landing_title {
+					padding-top: 230px;
+				}
+
+				.btn-landing {
+					background: none;
+					border: solid;
+				}
+
+				.btn-landing:hover { 
+				    background: none;
+				     border-color: white;
+				}
+				.navbar {
+				  margin-bottom: 0px;
+				}
+
+
+			(iv) inside application.html.erb , edit like this
+					<% if current_page?(root_path) %>
+					  <div class="landing">
+					<% else %>
+					  <div class="container">
+					<% end %>
+					  <%= yield %>
+					  </div>
+
+
+
+
 
 
 
