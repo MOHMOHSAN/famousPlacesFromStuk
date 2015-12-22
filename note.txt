@@ -880,6 +880,15 @@ Note : *** if u got messed up everything in migration,
 
 			</script>
 
+			(ii) inside dashboard.html.erb , change name to link
+				<td><%= link_to review.place.name , place_path(review.place) %></td>
+
+
+
+
+22:			// ------------- deployment --------- //
+			
+
 
 
 
