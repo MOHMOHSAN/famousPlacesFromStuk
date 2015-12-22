@@ -3,6 +3,7 @@ class ReviewsController < ApplicationController
 	before_action :set_review, only: [:edit,:update,:destroy]
 
 	def edit
+		#  this is needed cos , place id is passing when editing reviews
 		@place = @review.place
 	end
 
