@@ -260,6 +260,84 @@
 			@place = current_user.places.new(place_params)
 
 		then places > _form > remove user_id field
- 		
+
+		git add .
+		git commit -m "added current user to places"
+		git push origin master
+
+
+
+13:		//--------- geolocation -------
+		geocoding from https://github.com/alexreisner/geocoder
+
+		before that , delete all records from places
+		Place.all.delete_all
+
+		gem 'geocoder' 
+
+		rails g migration AddMapToPlaces latitude:float longitude:float
+
+		inside APP > MODELS > PLACE.RB
+		geocoded_by :address
+		after_validation :geocode
+
+		** very important latitude and longitude must be exactly same can't give new names for that model
+		cos it is integrated inside gem
+
+		inside show.html.erb , add
+		<%= @place.latitude %>
+		<%= @place.longitude %>
+
+Note : *** if u got messed up everything in migration, 
+		As I didn't care if the DB data was deleted, this is how I fixed it:
+
+		Drop the entire database rake db:drop
+		Edit the [timestamp]_migration_name.rb file to correctly say boolean
+		Create the database again rake db:create
+		Migrate the data rake db:migrate
+
+
+		// create google map
+		copy javascript link to application.html.erb under csrf tag
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=yourkey"></script>
+		**yourkey is google developer account key
+
+
+
+		// copy under <%= @place.latitude %> , inside show.html.erb
+
+		<div id="map-canvas" style="width: 230px; height: 230px;"></div>
+
+
+		<script type="text/javascript">
+		      function initialize() {
+		        var mycenter = { lat: <%= @place.latitude %>, lng: <%= @place.longitude %>}
+		        var mapOptions = {
+		          center: mycenter,
+		          zoom: 8
+		        };
+		        var map = new google.maps.Map(document.getElementById('map-canvas'),
+		            mapOptions);
+		        var marker = new google.maps.Marker({
+		          position: mycenter,
+		          map: map
+		        });
+		      }
+		      google.maps.event.addDomListener(window, 'load', initialize);
+		 </script>
+
+
+		 ** note if u use leaflet , u don't need api key but need to import leaflet css and js 
+
+
+		 //add to github
+		 
+		git add .
+		git commit -m "Added maps to places"
+		git push origin master
+
+
+
+
 
 

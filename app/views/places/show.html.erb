@@ -30,5 +30,24 @@
   <%= @place.user_id %>
 </p>
 
+<%= @place.latitude %>
+<%= @place.longitude %>
+
+<div id="map" style="width:230px;height: 230px;"></div>
+
+<script type="text/javascript">
+  $(function() {
+    
+    var lat = <%= @place.latitude %>
+    var lng = <%= @place.longitude %>
+    var loc = '<%= @place.name %>'
+    var map = new L.Map("map", {center: [lat,lng], zoom: 13})
+      .addLayer(new L.TileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"));
+    var marker = L.marker([lat,lng]).addTo(map);
+    marker.bindPopup(loc).openPopup();
+  });
+
+</script>
+
 <%= link_to 'Edit', edit_place_path(@place) %> |
 <%= link_to 'Back', places_path %>
