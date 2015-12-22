@@ -331,9 +331,49 @@ Note : *** if u got messed up everything in migration,
 
 
 		 //add to github
-		 
+
 		git add .
 		git commit -m "Added maps to places"
+		git push origin master
+
+
+14:		// ------------- styling views> places > show.html.erb a little bit
+		 <div class="row">
+		    <div class="col-md-3">
+		      <h3><%= @place.name %></h3>
+		      <p>
+		        <strong>Address:</strong>
+		        <%= @place.address %>
+		      </p>
+
+		      <p>
+		        <strong>Phone:</strong>
+		        <%= @place.phone %>
+		      </p>
+
+		      <p>
+		        <strong>Website:</strong>
+		        <%= @place.website %>
+		      </p>
+		      
+		       <p>
+		        <strong>Description:</strong>
+		        <%=  @place.description %>
+		      </p>
+
+		       <div id="map-canvas" style="width: 230px; height: 230px;"></div>
+		 
+		   </div>
+		   <div class="col-md-6">
+		    <h3>Reviews by People</h3>
+		  </div> -----------
+		</div>
+		javascript part remain the same here
+
+
+		// add to github
+		git add --all
+		git commit -m "Made places better"
 		git push origin master
 
 
