@@ -398,6 +398,93 @@ Note : *** if u got messed up everything in migration,
 
 		(iv)
 		create new controller called reviews_controller.rb and pasted this
+			class ReviewsController < ApplicationController
+				before_action :authenticate_user! 
+				before_action :set_review, only: [:edit,:update,:destroy]
+
+				def edit
+					@place = @review.place
+				end
+
+				def create
+					@review = current_user.reviews.new(review_params)
+					puts @review
+
+				    respond_to do |format|
+				      if @review.save
+				        format.html { redirect_to place_path(@review.place), notice: 'Review was successfully created.' }
+				        format.json { render :show, status: :created, location: @review }
+				      else
+				      	redirect_to place_path(@review.place),notice: "Something went wrong"
+				      end
+				    end
+				  end
+
+				def update
+					respond_to do |format|
+				      if @review.update(review_params)
+				        format.html { redirect_to place_path(@review.place), notice: 'Review was successfully updated.' }
+				        format.json { render :show, status: :ok, location: @review }
+				      else
+				       redirect_to place_path(@review.place),notice: "Something went wrong"
+				      end
+				    end
+				end
+
+				def destroy
+					@review.destroy
+				    respond_to do |format|
+				      format.html { redirect_to place_path(@review.place), notice: 'Review was successfully destroyed.' }
+				    end
+				end
+
+				private
+
+				def set_review
+					@review = Review.find(params[:id])
+				end
+
+				def review_params
+					params.require(:review).permit(:content,:place_id)
+				end
+			end
+					or
+			class ReviewsController < ApplicationController
+			  before_action :authenticate_user!
+			  before_action :set_review, only: [:edit, :update, :destroy]
+
+			  respond_to :html
+
+			  def edit
+			    @place = @review.place
+			  end
+
+			  def create
+			    @review = current_user.reviews.new(review_params)
+			    @review.save
+			    respond_with(@review)
+			  end
+
+			  def update
+			    @review.update(review_params)
+			    respond_with(@review)
+			  end
+
+			  def destroy
+			    @review.destroy
+			    respond_with(@review)
+			  end
+
+			  private
+			    def set_review
+			      @review = Review.find(params[:id])
+			    end
+
+			    def review_params
+			      params.require(:review).permit(:place_id, :content)
+			    end
+			end
+
 
 
 		(v)
@@ -430,7 +517,7 @@ Note : *** if u got messed up everything in migration,
 		add routes 
 			resources :reviews
 
-		(viii)	displaying all reviews inside show
+		(viii)	displaying all reviews inside show --------
 		inside places_controller.rb , inside show method, add
 			@reviews = @place.reviews above @review
 
@@ -440,8 +527,114 @@ Note : *** if u got messed up everything in migration,
    		below create review renderer
 
    		inside views > reviews , create new file called _review.html.erb and add
-   			<p><%= gravatar_tag review.user.email,size:20 %>
-			<%= review.content %> by <%= review.user.name %></p>
+   			<%= gravatar_tag review.user.email,size:20 %>
+			<%= review.content %> by <%= review.user.name %>
+			<% if current_user.id == review.user.id %>
+				<%= link_to "Edit Review" , edit_review_path(review) %>
+			<% end %>
+
+		(X)	edit reviews --------
+			create new file called edit.html.erb
+			and add
+				<h1>Editing Review</h1>
+				<%= render 'form' %>
+				<%= link_to 'Back', place_path(@review.place) %>
+
+
+		(xi)	push to github
+
+
+16:		//------------ add rating ---------------
+		jquery star from https://github.com/wbotelhos/raty
+
+		(i) create new file called raty.js inside javascript folder
+			and copy raty javascript
+
+
+		(ii) copy images star-half, off , on png and 
+				open current project folder from terminal using open . then 
+
+			pasted these images
+
+							OR
+
+		(i)	download these 2 files - jquery.raty.css + jquery.raty.js and place them in the vendor/assets correspondent folder(javscripts + stylesheets)
+
+		(ii)	APP/ASSETS/STYLESHEETS/APPLICATION.SCSS
+				*= require jquery.raty.css
+
+				APP/ASSETS/JAVASCRIPTS/APPLICATION.JS
+				//= require jquery.raty.js
+
+				VENDOR/ASSETS/STYLESHEETS/JQUERY.RATY.CSS , insert
+				    .star-on-png:before {
+					  content: "\f005";
+					}
+
+					.star-off-png:before {
+					  content: "\f006";
+					}
+
+				Copy the images:
+				- star-off.png
+				- star-on.png
+
+
+
+
+
+		(iii) add rating field inside reviews model
+				rails g migration AddScoreToReviews score:integer
+
+			  go to that migration file , and add
+			  default: 0 at the end of sentence like this 
+			  	add_column :places, :total_average_rating, :integer, default: 0
+
+			  then rake db:migrate
+
+
+		(iv)  add validation inside review.rb
+				validates_presence_of :score 
+
+
+		(v)	 add params new field call score inside reviews_controller.rb
+			.permit(:score)
+
+
+		(vi) inside reviews > _form.html.erb > below input content , copy 
+			 	<%= f.hidden_field :score , required: true %>
+    			<div class="score"></div>
+
+    			and 
+    			<script type="text/javascript">
+					$(".score").raty({
+						starOn:  "<%= image_path('star-on.png') %>",
+						starOff: "<%= image_path('star-off.png') %>",
+						target: "#review_score"	,
+						targetKeep: true,
+						targetType: "number"
+					});
+				</script>
+				** not startOn but starOn
+
+
+		(v)	inside reviews > _reviews.html.erb
+			<div class ="score_<%= review.id %>">
+			</div>
+
+
+		(vi)	go to places > show.html.erb , after map javascript , copy this
+				<% @reviews.each do |review| %>
+					$(".score_<%= review.id %> ").raty({
+						starOn:  "<%= image_path('star-on.png') %>",
+						starOff: "<%= image_path('star-off.png') %>",
+						score: <%= review.score %>,
+						readOnly: true
+					});
+				<% end %>
+
+
+		(vii) push to github
 
 
 

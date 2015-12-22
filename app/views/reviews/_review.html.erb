@@ -1,4 +1,9 @@
 <p>
 	<%= gravatar_tag review.user.email,size:20 %>
 	<%= review.content %> by <%= review.user.name %>
+	<div class="score_<%= review.id %>"></div>
+
+	<% if current_user.id == review.user.id %>
+		<%= link_to "Edit Review" , edit_review_path(review) %>
+	<% end %>
 </p>
